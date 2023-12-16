@@ -1,0 +1,46 @@
+name: Update version
+on:
+  schedule:
+    - cron: '0 2 * * *'
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+
+  update:
+    name: Update factorio version
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      # - name: Check Nix flake inputs
+      #   uses: DeterminateSystems/flake-checker-action@v5
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v3
+      - name: Get update.py
+        run: curl -O https://raw.githubusercontent.com/NixOS/nixpkgs/master/pkgs/games/factorio/update.py
+      - name: Permission exec
+        run: chmod +x update.py
+      - name: python dep
+        run: pip install absl-py requests
+      - name: Update version
+        continue-on-error: true
+        run: python update.py --username ${{ secrets.USERNAME }} --token ${{ secrets.TOKEN }}
+
+      - name: Check and commit changes
+        id: commit
+        continue-on-error: true
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add versions.json
+          git commit -m "version: update"
+
+      - name: Push changes
+        if: steps.commit.outcome == 'success'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: master
