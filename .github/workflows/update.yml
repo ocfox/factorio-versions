@@ -20,7 +20,7 @@ jobs:
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@v3
       - name: Get update.py
-        run: curl -O https://raw.githubusercontent.com/NixOS/nixpkgs/master/pkgs/games/factorio/update.py
+        run: curl -O https://raw.githubusercontent.com/NixOS/nixpkgs/refs/heads/master/pkgs/by-name/fa/factorio/update.py
       - name: Permission exec
         run: chmod +x update.py
       - name: python dep
