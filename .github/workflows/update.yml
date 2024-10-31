@@ -27,7 +27,7 @@ jobs:
         run: pip install absl-py requests
       - name: Update version
         continue-on-error: true
-        run: ./update.py --username ${{ secrets.USERNAME }} --token ${{ secrets.TOKEN }}
+        run: ./update.py
 
       - name: Check and commit changes
         id: commit
